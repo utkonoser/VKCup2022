@@ -56,7 +56,7 @@ func RunReadAllSort() {
 	wg.Wait()
 }
 
-func CreateTxtWithQuickSort() {
+func CreateTxtWithQuickSort(result []int) {
 
 	resTxt, err := os.Create("data/res.txt")
 	if err != nil {
@@ -65,7 +65,7 @@ func CreateTxtWithQuickSort() {
 
 	defer resTxt.Close()
 
-	for _, i := range Result {
+	for _, i := range result {
 		_, err = resTxt.WriteString(fmt.Sprintln(i))
 		if err != nil {
 			log.Fatal(err)
