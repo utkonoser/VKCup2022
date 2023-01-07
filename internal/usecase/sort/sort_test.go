@@ -19,6 +19,7 @@ func IsSorted(data []int) bool {
 	return true
 }
 
+// TestRunSort - тестирование полной работы кейса с сортировкой данных
 func TestRunSort(t *testing.T) {
 	var testRes []int
 	dataPath := "../../../data/"
@@ -46,6 +47,7 @@ func TestRunSort(t *testing.T) {
 	}
 }
 
+// TestInsertSort - тестирование сортировки вставкой
 func TestInsertSort(t *testing.T) {
 	var testSlice = []int{9, 7, 6, 8, 3, 2, 4, 5, 1}
 
@@ -62,6 +64,7 @@ func TestInsertSort(t *testing.T) {
 	}
 }
 
+// TestQSort - тестирование конкурентной быстрой сортировки
 func TestQSort(t *testing.T) {
 	sortedBool := false
 	size := 50_000_000

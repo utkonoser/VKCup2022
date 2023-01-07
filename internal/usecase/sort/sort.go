@@ -29,7 +29,7 @@ func RunSort(path string) {
 	CreateTxtWithQuickSort(Result.Res, path)
 }
 
-// RunReadAllSort - функция читает значения из файлов в папке data и записывает из в один слайс
+// RunReadAllSort - функция читает значения из файлов в нужной папке и записывает из в один слайс
 func RunReadAllSort(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
 		err = os.Remove(path + "res.txt")

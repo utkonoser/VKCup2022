@@ -10,8 +10,11 @@ import (
 	"os"
 )
 
+// dataPath - относительный путь к папке, где располагаются считываемые данные
+const dataPath = "../../data/"
+
 func main() {
-	dataPath := "../../data/"
+
 	s := flag.Bool("sort", false, "boolean value")
 	u := flag.Bool("uniq", false, "boolean value")
 	h := flag.Bool("heap", false, "boolean value")
@@ -21,18 +24,18 @@ func main() {
 
 	switch {
 	case *s && *u && args == 3:
-		fmt.Println("case uniq sort")
+		fmt.Println("Run case uniq sort...")
 		uniqSort.RunUniqSort(dataPath)
 	case *s && args == 2:
-		fmt.Println("case sort")
+		fmt.Println("Run case sort...")
 		sort.RunSort(dataPath)
 	case *u && args == 2:
-		fmt.Println("case uniq")
-		uniq.RunUniq()
+		fmt.Println("Run case uniq...")
+		uniq.RunUniq(dataPath)
 	case *h && args == 2:
-		fmt.Println("case heap")
-		heap.RunHeap()
+		fmt.Println("Run case heap...")
+		heap.RunHeap(dataPath)
 	default:
-		fmt.Println("please add subcommand")
+		fmt.Println("Please add subcommand")
 	}
 }

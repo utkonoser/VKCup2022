@@ -11,11 +11,13 @@ import (
 
 var SetVar Set
 
+// Set - реализация сета уникальных значений через map
 type Set struct {
 	items map[int]struct{}
 	sync.Mutex
 }
 
+// Insert - метод Set, который добавляет элемент в уникальное множество
 func (s *Set) Insert(item int) {
 	if s.items == nil {
 		s.items = make(map[int]struct{})
@@ -26,11 +28,13 @@ func (s *Set) Insert(item int) {
 	}
 }
 
+// In - метод Set, проверяющий находится ли элемент во множестве
 func (s *Set) In(item int) bool {
 	_, ok := s.items[item]
 	return ok
 }
 
+// Items - метод Set, возвращающий слайс элементов из уникального множества
 func (s *Set) Items() []int {
 	var items []int
 	for item := range s.items {
@@ -39,15 +43,16 @@ func (s *Set) Items() []int {
 	return items
 }
 
-func RunUniq() {
-	if _, err := os.Stat("../../data/res.txt"); err == nil {
-		err = os.Remove("../../data/res.txt")
+// RunUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
+func RunUniq(path string) {
+	if _, err := os.Stat(path + "res.txt"); err == nil {
+		err = os.Remove(path + "res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	resTxt, err := os.Create("../../data/res.txt")
+	resTxt, err := os.Create(path + "res.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +66,7 @@ func RunUniq() {
 
 	var wg sync.WaitGroup
 
-	files, err := os.ReadDir("../../data/")
+	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -70,7 +75,7 @@ func RunUniq() {
 
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("../../data/" + txtFile.Name())
+			file, err := os.Open(path + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}

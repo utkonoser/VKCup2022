@@ -10,18 +10,21 @@ import (
 	"sync"
 )
 
+// SetVar - множество уникальных значений
 var SetVar uniq.Set
 
+// RunUniqSort - основная функция кейса с сортировкой уникальных значений
 func RunUniqSort(path string) {
-	RunReadAllUniqSort()
+	RunReadAllUniqSort(path)
 	items := SetVar.Items()
 	sort.QSort(items)
 	sort.CreateTxtWithQuickSort(items, path)
 }
 
-func RunReadAllUniqSort() {
-	if _, err := os.Stat("../../data/res.txt"); err == nil {
-		err = os.Remove("../../data/res.txt")
+// RunReadAllUniqSort - функция читает значения в нужной папке и добавляет их в уникальное множество
+func RunReadAllUniqSort(path string) {
+	if _, err := os.Stat(path + "res.txt"); err == nil {
+		err = os.Remove(path + "res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -29,7 +32,7 @@ func RunReadAllUniqSort() {
 
 	var wg sync.WaitGroup
 
-	files, err := os.ReadDir("../../data/")
+	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +41,7 @@ func RunReadAllUniqSort() {
 
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("../../data/" + txtFile.Name())
+			file, err := os.Open(path + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
