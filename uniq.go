@@ -50,7 +50,12 @@ func RunReadAllUniq() {
 		log.Fatal(err)
 	}
 
-	defer resTxt.Close()
+	defer func() {
+		err = resTxt.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	var wg sync.WaitGroup
 

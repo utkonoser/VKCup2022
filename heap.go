@@ -31,7 +31,10 @@ func RunReadAllHeap() {
 				log.Fatal(err)
 			}
 			defer func() {
-				file.Close()
+				err = file.Close()
+				if err != nil {
+					log.Fatal(err)
+				}
 				wg.Done()
 			}()
 
@@ -87,7 +90,12 @@ func CreateTxtWithHeap(items []int) {
 		log.Fatal(err)
 	}
 
-	defer resTxt.Close()
+	defer func() {
+		err = resTxt.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	for _, i := range items {
 		_, err = resTxt.WriteString(fmt.Sprintln(i))
