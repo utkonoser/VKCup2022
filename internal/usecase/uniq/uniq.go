@@ -1,4 +1,4 @@
-package main
+package uniq
 
 import (
 	"bufio"
@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"sync"
 )
+
+var SetVar Set
 
 type Set struct {
 	items map[int]struct{}
@@ -37,15 +39,15 @@ func (s *Set) Items() []int {
 	return items
 }
 
-func RunReadAllUniq() {
-	if _, err := os.Stat("data/res.txt"); err == nil {
-		err = os.Remove("data/res.txt")
+func RunUniq() {
+	if _, err := os.Stat("../../data/res.txt"); err == nil {
+		err = os.Remove("../../data/res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	resTxt, err := os.Create("data/res.txt")
+	resTxt, err := os.Create("../../data/res.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,7 +61,7 @@ func RunReadAllUniq() {
 
 	var wg sync.WaitGroup
 
-	files, err := os.ReadDir("data/")
+	files, err := os.ReadDir("../../data/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +70,7 @@ func RunReadAllUniq() {
 
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("data/" + txtFile.Name())
+			file, err := os.Open("../../data/" + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -90,15 +92,15 @@ func RunReadAllUniq() {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
-						set.Lock()
-						if ok := set.In(num); !ok {
-							set.Insert(num)
+						SetVar.Lock()
+						if ok := SetVar.In(num); !ok {
+							SetVar.Insert(num)
 							_, err = resTxt.WriteString(fmt.Sprintln(num))
 							if err != nil {
 								log.Fatal(err)
 							}
 						}
-						set.Unlock()
+						SetVar.Unlock()
 					}()
 				}
 				if err := scanner.Err(); err != nil {

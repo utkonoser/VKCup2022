@@ -1,16 +1,27 @@
-package main
+package uniqSort
 
 import (
 	"bufio"
+	"goElimination/internal/usecase/sort"
+	"goElimination/internal/usecase/uniq"
 	"log"
 	"os"
 	"strconv"
 	"sync"
 )
 
+var SetVar uniq.Set
+
+func RunUniqSort() {
+	RunReadAllUniqSort()
+	items := SetVar.Items()
+	sort.QSort(items)
+	sort.CreateTxtWithQuickSort(items)
+}
+
 func RunReadAllUniqSort() {
-	if _, err := os.Stat("data/res.txt"); err == nil {
-		err = os.Remove("data/res.txt")
+	if _, err := os.Stat("../../data/res.txt"); err == nil {
+		err = os.Remove("../../data/res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -18,7 +29,7 @@ func RunReadAllUniqSort() {
 
 	var wg sync.WaitGroup
 
-	files, err := os.ReadDir("data/")
+	files, err := os.ReadDir("../../data/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,7 +38,7 @@ func RunReadAllUniqSort() {
 
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("data/" + txtFile.Name())
+			file, err := os.Open("../../data/" + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -49,11 +60,11 @@ func RunReadAllUniqSort() {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
-						set.Lock()
-						if ok := set.In(num); !ok {
-							set.Insert(num)
+						SetVar.Lock()
+						if ok := SetVar.In(num); !ok {
+							SetVar.Insert(num)
 						}
-						set.Unlock()
+						SetVar.Unlock()
 					}()
 				}
 				if err := scanner.Err(); err != nil {

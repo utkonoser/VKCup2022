@@ -1,4 +1,4 @@
-package main
+package sort
 
 import (
 	"bufio"
@@ -14,16 +14,24 @@ const (
 	quickSortThreshold  = 30
 )
 
+var Result []int
+
+func RunSort() {
+	RunReadAllSort()
+	QSort(Result)
+	CreateTxtWithQuickSort(Result)
+}
+
 func RunReadAllSort() {
-	if _, err := os.Stat("data/res.txt"); err == nil {
-		err = os.Remove("data/res.txt")
+	if _, err := os.Stat("../../data/res.txt"); err == nil {
+		err = os.Remove("../../data/res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	var wg sync.WaitGroup
-	files, err := os.ReadDir("data/")
+	files, err := os.ReadDir("../../data/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +39,7 @@ func RunReadAllSort() {
 		txtFile := txtFile
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("data/" + txtFile.Name())
+			file, err := os.Open("../../data/" + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -61,7 +69,7 @@ func RunReadAllSort() {
 
 func CreateTxtWithQuickSort(result []int) {
 
-	resTxt, err := os.Create("data/res.txt")
+	resTxt, err := os.Create("../../data/res.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

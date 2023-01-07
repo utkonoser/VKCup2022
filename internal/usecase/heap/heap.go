@@ -1,4 +1,4 @@
-package main
+package heap
 
 import (
 	"bufio"
@@ -9,16 +9,33 @@ import (
 	"sync"
 )
 
+var WgH sync.WaitGroup
+var HeapCh = make(chan int, 100_000_000)
+var HeapVar Heap
+
+func RunHeap() {
+	RunReadAllHeap()
+	WgH.Add(1)
+	go func() {
+		defer WgH.Done()
+		for data := range HeapCh {
+			HeapVar.Insert(data)
+		}
+	}()
+	WgH.Wait()
+	CreateTxtWithHeap(HeapVar.Items)
+}
+
 func RunReadAllHeap() {
-	if _, err := os.Stat("data/res.txt"); err == nil {
-		err = os.Remove("data/res.txt")
+	if _, err := os.Stat("../../data/res.txt"); err == nil {
+		err = os.Remove("../../data/res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	var wg sync.WaitGroup
-	files, err := os.ReadDir("data/")
+	files, err := os.ReadDir("../../data/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,7 +43,7 @@ func RunReadAllHeap() {
 		txtFile := txtFile
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("data/" + txtFile.Name())
+			file, err := os.Open("../../data/" + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -85,7 +102,7 @@ func (h *Heap) buildHeap(index int) {
 
 func CreateTxtWithHeap(items []int) {
 
-	resTxt, err := os.Create("data/res.txt")
+	resTxt, err := os.Create("../../data/res.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
