@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-
+	dataPath := "../../data/"
 	s := flag.Bool("sort", false, "boolean value")
 	u := flag.Bool("uniq", false, "boolean value")
 	h := flag.Bool("heap", false, "boolean value")
@@ -22,10 +22,10 @@ func main() {
 	switch {
 	case *s && *u && args == 3:
 		fmt.Println("case uniq sort")
-		uniqSort.RunUniqSort()
+		uniqSort.RunUniqSort(dataPath)
 	case *s && args == 2:
 		fmt.Println("case sort")
-		sort.RunSort()
+		sort.RunSort(dataPath)
 	case *u && args == 2:
 		fmt.Println("case uniq")
 		uniq.RunUniq()

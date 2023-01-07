@@ -12,11 +12,11 @@ import (
 
 var SetVar uniq.Set
 
-func RunUniqSort() {
+func RunUniqSort(path string) {
 	RunReadAllUniqSort()
 	items := SetVar.Items()
 	sort.QSort(items)
-	sort.CreateTxtWithQuickSort(items)
+	sort.CreateTxtWithQuickSort(items, path)
 }
 
 func RunReadAllUniqSort() {

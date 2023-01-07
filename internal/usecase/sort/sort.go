@@ -10,28 +10,36 @@ import (
 )
 
 const (
+	// concurrentThreshold - константа, при которой сортировка перестает выполняться конкурентно
 	concurrentThreshold = 5000
-	quickSortThreshold  = 30
+	// quickSortThreshold - константа, при которой быстрая сортировка заменяется сортировкой вставкой
+	quickSortThreshold = 30
 )
 
-var Result []int
-
-func RunSort() {
-	RunReadAllSort()
-	QSort(Result)
-	CreateTxtWithQuickSort(Result)
+// Result - слайс результирующих значений
+var Result struct {
+	Res []int
+	sync.Mutex
 }
 
-func RunReadAllSort() {
-	if _, err := os.Stat("../../data/res.txt"); err == nil {
-		err = os.Remove("../../data/res.txt")
+// RunSort - запуск всех функций для реализации сортировки данных
+func RunSort(path string) {
+	RunReadAllSort(path)
+	QSort(Result.Res)
+	CreateTxtWithQuickSort(Result.Res, path)
+}
+
+// RunReadAllSort - функция читает значения из файлов в папке data и записывает из в один слайс
+func RunReadAllSort(path string) {
+	if _, err := os.Stat(path + "res.txt"); err == nil {
+		err = os.Remove(path + "res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	var wg sync.WaitGroup
-	files, err := os.ReadDir("../../data/")
+	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +47,7 @@ func RunReadAllSort() {
 		txtFile := txtFile
 		wg.Add(1)
 		go func() {
-			file, err := os.Open("../../data/" + txtFile.Name())
+			file, err := os.Open(path + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -57,7 +65,9 @@ func RunReadAllSort() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				Result = append(Result, num)
+				Result.Lock()
+				Result.Res = append(Result.Res, num)
+				Result.Unlock()
 			}
 			if err := scanner.Err(); err != nil {
 				log.Fatal(err)
@@ -67,9 +77,10 @@ func RunReadAllSort() {
 	wg.Wait()
 }
 
-func CreateTxtWithQuickSort(result []int) {
+// CreateTxtWithQuickSort - функция создает результирующий файл res.txt в папке data
+func CreateTxtWithQuickSort(result []int, path string) {
 
-	resTxt, err := os.Create("../../data/res.txt")
+	resTxt, err := os.Create(path + "res.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -89,6 +100,7 @@ func CreateTxtWithQuickSort(result []int) {
 	}
 }
 
+// InsertSort - функция сортировки вставкой, эффективна при малом количестве сортируемых элементов
 func InsertSort(data []int) {
 	i := 1
 	for i < len(data) {
@@ -103,6 +115,7 @@ func InsertSort(data []int) {
 	}
 }
 
+// Partition - вспомогательная функция быстрой сортировки
 func Partition(data []int) int {
 	data[len(data)/2], data[0] = data[0], data[len(data)/2]
 	pivot := data[0]
@@ -119,15 +132,7 @@ func Partition(data []int) int {
 	return mid
 }
 
-func IsSorted(data []int) bool {
-	for i := 1; i < len(data); i++ {
-		if data[i] < data[i-1] {
-			return false
-		}
-	}
-	return true
-}
-
+// ConcurrentQuickSort - функция конкурентной быстрой сортировки данных
 func ConcurrentQuickSort(data []int, wg *sync.WaitGroup) {
 	for len(data) >= quickSortThreshold {
 		mid := Partition(data)
@@ -152,6 +157,7 @@ func ConcurrentQuickSort(data []int, wg *sync.WaitGroup) {
 	InsertSort(data)
 }
 
+// QSort - функция, запускающая сортировку
 func QSort(data []int) {
 	var wg sync.WaitGroup
 	ConcurrentQuickSort(data, &wg)
