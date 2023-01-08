@@ -34,6 +34,34 @@ func RunHeap(path string) {
 	sort.CreateTxt(HeapVar.Items, path)
 }
 
+// Heap - реализация кучи
+type Heap struct {
+	Items []int
+}
+
+// Swap - метод Heap, который меняет местами два элемента кучи
+func (h *Heap) Swap(index1, index2 int) {
+	h.Items[index1], h.Items[index2] = h.Items[index2], h.Items[index1]
+}
+
+// Insert - метод Heap, который вставляет новый элемент в кучу
+func (h *Heap) Insert(value int) {
+	h.Items = append(h.Items, value)
+	h.buildHeap(len(h.Items) - 1)
+}
+
+// buildHeap - отвечает за корректную сборку кучи
+func (h *Heap) buildHeap(index int) {
+	var parent int
+	if index > 0 {
+		parent = (index - 1) / 2
+		if h.Items[index] > h.Items[parent] {
+			h.Swap(index, parent)
+		}
+		h.buildHeap(parent)
+	}
+}
+
 // RunReadAllHeap - функция, которая читает данные из нужной папки и передает их через канал в другую горутину
 func RunReadAllHeap(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
@@ -83,32 +111,4 @@ func RunReadAllHeap(path string) {
 	}
 	wg.Wait()
 	close(HeapCh)
-}
-
-// Heap - реализация кучи
-type Heap struct {
-	Items []int
-}
-
-// Swap - метод Heap, который меняет местами два элемента кучи
-func (h *Heap) Swap(index1, index2 int) {
-	h.Items[index1], h.Items[index2] = h.Items[index2], h.Items[index1]
-}
-
-// Insert - метод Heap, который вставляет новый элемент в кучу
-func (h *Heap) Insert(value int) {
-	h.Items = append(h.Items, value)
-	h.buildHeap(len(h.Items) - 1)
-}
-
-// buildHeap - отвечает за корректную сборку кучи
-func (h *Heap) buildHeap(index int) {
-	var parent int
-	if index > 0 {
-		parent = (index - 1) / 2
-		if h.Items[index] > h.Items[parent] {
-			h.Swap(index, parent)
-		}
-		h.buildHeap(parent)
-	}
 }

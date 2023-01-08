@@ -48,6 +48,14 @@ func (s *SetStruct) Items() sort.SliceItems {
 	return &items
 }
 
+// RunUniq - функция, запускающая кейс с уникальным множеством
+func RunUniq(path string) {
+	var SetVar SetStruct
+	SetVar.RunReadAllUniq(path)
+	items := SetVar.Items().ShowItems()
+	sort.CreateTxt(items, path)
+}
+
 // RunReadAllUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
 func (s *SetStruct) RunReadAllUniq(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
@@ -97,11 +105,4 @@ func (s *SetStruct) RunReadAllUniq(path string) {
 		}()
 	}
 	wg.Wait()
-}
-
-func RunUniq(path string) {
-	var SetVar SetStruct
-	SetVar.RunReadAllUniq(path)
-	items := SetVar.Items().ShowItems()
-	sort.CreateTxt(items, path)
 }

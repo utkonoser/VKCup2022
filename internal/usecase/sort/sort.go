@@ -36,6 +36,7 @@ func RunSort(path string) {
 	CreateTxt(r.Res, path)
 }
 
+// ShowItems - метод, возвращающий слайс структуры
 func (r *Result) ShowItems() []int {
 	return r.Res
 }
