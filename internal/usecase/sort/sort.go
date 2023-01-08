@@ -16,21 +16,32 @@ const (
 	quickSortThreshold = 30
 )
 
+// SliceItems - интерфейс результирующего списка
+type SliceItems interface {
+	RunReadAll(path string)
+	ShowItems() []int
+}
+
 // Result - слайс результирующих значений
-var Result struct {
+type Result struct {
 	Res []int
 	sync.Mutex
 }
 
 // RunSort - запуск всех функций для реализации сортировки данных
 func RunSort(path string) {
-	RunReadAllSort(path)
-	QSort(Result.Res)
-	CreateTxtWithQuickSort(Result.Res, path)
+	var r Result
+	r.RunReadAll(path)
+	QSort(r.Res)
+	CreateTxt(r.Res, path)
 }
 
-// RunReadAllSort - функция читает значения из файлов в нужной папке и записывает из в один слайс
-func RunReadAllSort(path string) {
+func (r *Result) ShowItems() []int {
+	return r.Res
+}
+
+// RunReadAll - функция читает значения из файлов в нужной папке и записывает из в один слайс
+func (r *Result) RunReadAll(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
 		err = os.Remove(path + "res.txt")
 		if err != nil {
@@ -65,9 +76,9 @@ func RunReadAllSort(path string) {
 				if err != nil {
 					log.Fatal(err)
 				}
-				Result.Lock()
-				Result.Res = append(Result.Res, num)
-				Result.Unlock()
+				r.Lock()
+				r.Res = append(r.Res, num)
+				r.Unlock()
 			}
 			if err := scanner.Err(); err != nil {
 				log.Fatal(err)
@@ -77,8 +88,8 @@ func RunReadAllSort(path string) {
 	wg.Wait()
 }
 
-// CreateTxtWithQuickSort - функция создает результирующий файл res.txt в папке data
-func CreateTxtWithQuickSort(result []int, path string) {
+// CreateTxt - функция создает результирующий файл res.txt в папке data
+func CreateTxt(r []int, path string) {
 
 	resTxt, err := os.Create(path + "res.txt")
 	if err != nil {
@@ -92,7 +103,7 @@ func CreateTxtWithQuickSort(result []int, path string) {
 		}
 	}()
 
-	for _, i := range result {
+	for _, i := range r {
 		_, err = resTxt.WriteString(fmt.Sprintln(i))
 		if err != nil {
 			log.Fatal(err)

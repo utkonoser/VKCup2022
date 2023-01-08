@@ -2,7 +2,7 @@ package uniq
 
 import (
 	"bufio"
-	"fmt"
+	"goElimination/internal/usecase/sort"
 	"log"
 	"os"
 	"strconv"
@@ -13,10 +13,8 @@ import (
 type SetInterface interface {
 	Insert(item int)
 	In(item int) bool
-	Items() []int
+	Items() sort.SliceItems
 }
-
-var SetVar SetStruct
 
 // SetStruct - реализация сета уникальных значений через map
 type SetStruct struct {
@@ -42,16 +40,16 @@ func (s *SetStruct) In(item int) bool {
 }
 
 // Items - метод SetStruct, возвращающий слайс элементов из уникального множества
-func (s *SetStruct) Items() []int {
-	var items []int
+func (s *SetStruct) Items() sort.SliceItems {
+	var items sort.Result
 	for item := range s.items {
-		items = append(items, item)
+		items.Res = append(items.Res, item)
 	}
-	return items
+	return &items
 }
 
 // RunReadAllUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
-func RunReadAllUniq(path string) {
+func (s *SetStruct) RunReadAllUniq(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
 		err = os.Remove(path + "res.txt")
 		if err != nil {
@@ -89,9 +87,9 @@ func RunReadAllUniq(path string) {
 				if err != nil {
 					log.Fatal(err)
 				}
-				SetVar.Lock()
-				SetVar.Insert(num)
-				SetVar.Unlock()
+				s.Lock()
+				s.Insert(num)
+				s.Unlock()
 			}
 			if err := scanner.Err(); err != nil {
 				log.Fatal(err)
@@ -102,30 +100,8 @@ func RunReadAllUniq(path string) {
 }
 
 func RunUniq(path string) {
-
-	RunReadAllUniq(path)
-	items := SetVar.Items()
-	CreateTxtWithUniq(items, path)
-}
-
-func CreateTxtWithUniq(items []int, path string) {
-
-	resTxt, err := os.Create(path + "res.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer func() {
-		err = resTxt.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	for _, i := range items {
-		_, err = resTxt.WriteString(fmt.Sprintln(i))
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	var SetVar SetStruct
+	SetVar.RunReadAllUniq(path)
+	items := SetVar.Items().ShowItems()
+	sort.CreateTxt(items, path)
 }

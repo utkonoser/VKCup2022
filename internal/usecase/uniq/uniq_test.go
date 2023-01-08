@@ -11,9 +11,9 @@ import (
 
 // TestRunUniq - полная проверка работоспособности кейса с уникальным множеством
 func TestRunUniq(t *testing.T) {
-	var testRes []int
+	var testRes SetStruct
 	dataPath := "../../../data/"
-	RunReadAllUniq(dataPath)
+	RunUniq(dataPath)
 
 	file, err := os.Open(dataPath + "res.txt")
 	if err != nil {
@@ -26,14 +26,15 @@ func TestRunUniq(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		testRes = append(testRes, num)
+		testRes.Insert(num)
 	}
 	if err := scanner.Err(); err != nil {
 		t.Error(err)
 	}
 
-	for i, num := range testRes {
-		if isInSlice(testRes[i+1:], num) {
+	items := testRes.Items().ShowItems()
+	for i, num := range items {
+		if isInSlice(items[i+1:], num) {
 			t.Error("result must be a unique set")
 			return
 		}
@@ -59,7 +60,7 @@ func TestSet_InsertAndItems(t *testing.T) {
 	for _, num := range testSlice {
 		testSet.Insert(num)
 	}
-	result := testSet.Items()
+	result := testSet.Items().ShowItems()
 	sort.Ints(result)
 	expected := []int{2, 6, 7, 9}
 
@@ -75,7 +76,7 @@ func TestSet_InsertAndItems(t *testing.T) {
 		for i := 0; i < 50_000_000; i++ {
 			test2Set.Insert(1)
 		}
-		lengthSet := len(test2Set.Items())
+		lengthSet := len(test2Set.Items().ShowItems())
 		if lengthSet != 1 {
 			t.Errorf("length test2Set must be 1, not %v", lengthSet)
 		}

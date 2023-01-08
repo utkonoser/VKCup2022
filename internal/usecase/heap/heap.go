@@ -2,7 +2,7 @@ package heap
 
 import (
 	"bufio"
-	"fmt"
+	"goElimination/internal/usecase/sort"
 	"log"
 	"os"
 	"strconv"
@@ -31,7 +31,7 @@ func RunHeap(path string) {
 		}
 	}()
 	WgH.Wait()
-	CreateTxtWithHeap(HeapVar.Items, path)
+	sort.CreateTxt(HeapVar.Items, path)
 }
 
 // RunReadAllHeap - функция, которая читает данные из нужной папки и передает их через канал в другую горутину
@@ -110,28 +110,5 @@ func (h *Heap) buildHeap(index int) {
 			h.Swap(index, parent)
 		}
 		h.buildHeap(parent)
-	}
-}
-
-// CreateTxtWithHeap - создает результирующий файл в нужной папке
-func CreateTxtWithHeap(items []int, path string) {
-
-	resTxt, err := os.Create(path + "res.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer func() {
-		err = resTxt.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	for _, i := range items {
-		_, err = resTxt.WriteString(fmt.Sprintln(i))
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 }
