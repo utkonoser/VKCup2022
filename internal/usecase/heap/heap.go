@@ -13,6 +13,13 @@ var WgH sync.WaitGroup
 var HeapCh = make(chan int, 100_000_000)
 var HeapVar Heap
 
+// HeapInterface - интерфейс кучи
+type HeapInterface interface {
+	Swap(index1, index2 int)
+	Insert(value int)
+	buildHeap(index int)
+}
+
 // RunHeap - функция, отвечающая за корректную работу кейса с кучей
 func RunHeap(path string) {
 	RunReadAllHeap(path)

@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -58,24 +59,31 @@ func main() {
 // createData - функция для создания тестовых файлов при countFiles=100
 // и countIntegers=500_000, размер данных будет ~1Gb
 func createData(countFiles, countIntegers int) {
+	var wg sync.WaitGroup
 	for j := 0; j < countFiles; j++ {
-		path := fmt.Sprintf("../../data/%v.txt", j)
+		wg.Add(1)
+		j := j
+		go func() {
+			defer wg.Done()
+			path := fmt.Sprintf("../../data/%v.txt", j)
 
-		resTxt, err := os.Create(path)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for i := 0; i < countIntegers; i++ {
-			num := rand.Int() * 100
-			_, err = resTxt.WriteString(fmt.Sprintln(num))
+			resTxt, err := os.Create(path)
 			if err != nil {
 				log.Fatal(err)
 			}
-		}
-		err = resTxt.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
+
+			for i := 0; i < countIntegers; i++ {
+				num := rand.Int() * 100
+				_, err = resTxt.WriteString(fmt.Sprintln(num))
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			err = resTxt.Close()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 	}
+	wg.Wait()
 }

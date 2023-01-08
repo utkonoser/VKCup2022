@@ -11,7 +11,7 @@ import (
 )
 
 // SetVar - множество уникальных значений
-var SetVar uniq.Set
+var SetVar uniq.SetStruct
 
 // RunUniqSort - основная функция кейса с сортировкой уникальных значений
 func RunUniqSort(path string) {
@@ -41,6 +41,7 @@ func RunReadAllUniqSort(path string) {
 
 		wg.Add(1)
 		go func() {
+
 			file, err := os.Open(path + txtFile.Name())
 			if err != nil {
 				log.Fatal(err)
@@ -53,26 +54,18 @@ func RunReadAllUniqSort(path string) {
 				wg.Done()
 			}()
 
-			if txtFile.Name() != "res.txt" {
-				scanner := bufio.NewScanner(file)
-				for scanner.Scan() {
-					num, err := strconv.Atoi(scanner.Text())
-					if err != nil {
-						log.Fatal(err)
-					}
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						SetVar.Lock()
-						if ok := SetVar.In(num); !ok {
-							SetVar.Insert(num)
-						}
-						SetVar.Unlock()
-					}()
-				}
-				if err := scanner.Err(); err != nil {
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				num, err := strconv.Atoi(scanner.Text())
+				if err != nil {
 					log.Fatal(err)
 				}
+				SetVar.Lock()
+				SetVar.Insert(num)
+				SetVar.Unlock()
+			}
+			if err := scanner.Err(); err != nil {
+				log.Fatal(err)
 			}
 		}()
 	}

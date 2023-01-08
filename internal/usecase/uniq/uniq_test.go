@@ -13,7 +13,7 @@ import (
 func TestRunUniq(t *testing.T) {
 	var testRes []int
 	dataPath := "../../../data/"
-	RunUniq(dataPath)
+	RunReadAllUniq(dataPath)
 
 	file, err := os.Open(dataPath + "res.txt")
 	if err != nil {
@@ -55,7 +55,7 @@ func isInSlice(slice []int, num int) bool {
 // TestSet_Insert - тест, проверяющий правильную работу методов Insert и Items
 func TestSet_InsertAndItems(t *testing.T) {
 	testSlice := []int{9, 7, 6, 9, 7, 2}
-	testSet := new(Set)
+	testSet := new(SetStruct)
 	for _, num := range testSlice {
 		testSet.Insert(num)
 	}
@@ -71,7 +71,7 @@ func TestSet_InsertAndItems(t *testing.T) {
 	t.Log("success: methods Insert and Items working correctly")
 
 	t.Run("50_000_000 insertions in set", func(t *testing.T) {
-		test2Set := new(Set)
+		test2Set := new(SetStruct)
 		for i := 0; i < 50_000_000; i++ {
 			test2Set.Insert(1)
 		}

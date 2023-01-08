@@ -71,7 +71,7 @@ func TestQSort(t *testing.T) {
 	testBigData := make([]int, size)
 
 	for i := 0; i < size; i++ {
-		testBigData[i] = 100 * rand.Int()
+		testBigData[i] = rand.Int()
 	}
 	sortedBool = IsSorted(testBigData)
 	t.Log("Before testing QSort\nIs sorted: ", sortedBool)

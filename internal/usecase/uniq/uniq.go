@@ -9,16 +9,23 @@ import (
 	"sync"
 )
 
-var SetVar Set
+// SetInterface - интерфейс уникального множества
+type SetInterface interface {
+	Insert(item int)
+	In(item int) bool
+	Items() []int
+}
 
-// Set - реализация сета уникальных значений через map
-type Set struct {
+var SetVar SetStruct
+
+// SetStruct - реализация сета уникальных значений через map
+type SetStruct struct {
 	items map[int]struct{}
 	sync.Mutex
 }
 
-// Insert - метод Set, который добавляет элемент в уникальное множество
-func (s *Set) Insert(item int) {
+// Insert - метод SetStruct, который добавляет элемент в уникальное множество
+func (s *SetStruct) Insert(item int) {
 	if s.items == nil {
 		s.items = make(map[int]struct{})
 	}
@@ -28,14 +35,14 @@ func (s *Set) Insert(item int) {
 	}
 }
 
-// In - метод Set, проверяющий находится ли элемент во множестве
-func (s *Set) In(item int) bool {
+// In - метод SetStruct, проверяющий находится ли элемент во множестве
+func (s *SetStruct) In(item int) bool {
 	_, ok := s.items[item]
 	return ok
 }
 
-// Items - метод Set, возвращающий слайс элементов из уникального множества
-func (s *Set) Items() []int {
+// Items - метод SetStruct, возвращающий слайс элементов из уникального множества
+func (s *SetStruct) Items() []int {
 	var items []int
 	for item := range s.items {
 		items = append(items, item)
@@ -43,14 +50,65 @@ func (s *Set) Items() []int {
 	return items
 }
 
-// RunUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
-func RunUniq(path string) {
+// RunReadAllUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
+func RunReadAllUniq(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
 		err = os.Remove(path + "res.txt")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+
+	var wg sync.WaitGroup
+
+	files, err := os.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, txtFile := range files {
+		txtFile := txtFile
+
+		wg.Add(1)
+		go func() {
+
+			file, err := os.Open(path + txtFile.Name())
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer func() {
+				err = file.Close()
+				if err != nil {
+					log.Fatal(err)
+				}
+				wg.Done()
+			}()
+
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				num, err := strconv.Atoi(scanner.Text())
+				if err != nil {
+					log.Fatal(err)
+				}
+				SetVar.Lock()
+				SetVar.Insert(num)
+				SetVar.Unlock()
+			}
+			if err := scanner.Err(); err != nil {
+				log.Fatal(err)
+			}
+		}()
+	}
+	wg.Wait()
+}
+
+func RunUniq(path string) {
+
+	RunReadAllUniq(path)
+	items := SetVar.Items()
+	CreateTxtWithUniq(items, path)
+}
+
+func CreateTxtWithUniq(items []int, path string) {
 
 	resTxt, err := os.Create(path + "res.txt")
 	if err != nil {
@@ -64,55 +122,10 @@ func RunUniq(path string) {
 		}
 	}()
 
-	var wg sync.WaitGroup
-
-	files, err := os.ReadDir(path)
-	if err != nil {
-		log.Fatal(err)
+	for _, i := range items {
+		_, err = resTxt.WriteString(fmt.Sprintln(i))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	for _, txtFile := range files {
-		txtFile := txtFile
-
-		wg.Add(1)
-		go func() {
-			file, err := os.Open(path + txtFile.Name())
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer func() {
-				err = file.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-				wg.Done()
-			}()
-
-			if txtFile.Name() != "res.txt" {
-				scanner := bufio.NewScanner(file)
-				for scanner.Scan() {
-					num, err := strconv.Atoi(scanner.Text())
-					if err != nil {
-						log.Fatal(err)
-					}
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						SetVar.Lock()
-						if ok := SetVar.In(num); !ok {
-							SetVar.Insert(num)
-							_, err = resTxt.WriteString(fmt.Sprintln(num))
-							if err != nil {
-								log.Fatal(err)
-							}
-						}
-						SetVar.Unlock()
-					}()
-				}
-				if err := scanner.Err(); err != nil {
-					log.Fatal(err)
-				}
-			}
-		}()
-	}
-	wg.Wait()
 }
