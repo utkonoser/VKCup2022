@@ -7,17 +7,19 @@ import (
 	"goElimination/internal/usecase/sort"
 	"goElimination/internal/usecase/uniq"
 	"goElimination/internal/usecase/uniqSort"
-	"log"
-	"math/rand"
 	"os"
-	"sync"
+	"runtime/debug"
 	"time"
 )
 
 // dataPath - относительный путь к папке, где располагаются считываемые данные
 const dataPath = "../../data/"
 
+// memoryLimit - число в байтах, сколько памяти может максимально потреблять приложение
+const memoryLimit = 524288000
+
 func main() {
+	debug.SetMemoryLimit(memoryLimit)
 
 	s := flag.Bool("sort", false, "boolean value")
 	u := flag.Bool("uniq", false, "boolean value")
@@ -54,36 +56,4 @@ func main() {
 	default:
 		fmt.Println("Please add subcommand")
 	}
-}
-
-// createData - функция для создания тестовых файлов при countFiles=100
-// и countIntegers=500_000, размер данных будет ~1Gb
-func createData(countFiles, countIntegers int) {
-	var wg sync.WaitGroup
-	for j := 0; j < countFiles; j++ {
-		wg.Add(1)
-		j := j
-		go func() {
-			defer wg.Done()
-			path := fmt.Sprintf("../../data/%v.txt", j)
-
-			resTxt, err := os.Create(path)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			for i := 0; i < countIntegers; i++ {
-				num := rand.Int() * 100
-				_, err = resTxt.WriteString(fmt.Sprintln(num))
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-			err = resTxt.Close()
-			if err != nil {
-				log.Fatal(err)
-			}
-		}()
-	}
-	wg.Wait()
 }

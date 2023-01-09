@@ -5,42 +5,43 @@
 Само задание можно найти чуть ниже. Вкратце расскажу, что я смог реализовать из задания и что не получилось.
 
 
-Что на мой взгляд у меня получилось:
+Что у меня получилось:
 - в кейсе sort реализовал конкурентный алгоритм быстрой сортировки
 - в кейсе heap реализовал структуру max-heap
 - в кейсе uniq реализовал структуру уникального множества
 - написал тесты, добился покрытия больше 80%, maintainability на CodeClimate показал отличную оценку
 - написал довольно подробное описание всех функций, методов и структур данных
+- смог уложиться в 500мб оперативки с помощью функции `debug.SetMemoryLimit()`
 
 
-Что у меня не получилось сделать:
-- не смог уложиться в нужные 500мб оперативки
+Что у меня не получилось:
 - не смог реализовать кейс с возобновлением работы сервиса при падении
+- слишком медленная работа приложения на мой взгляд
 
-Также я протестировал время работы каждого кейса на объеме данных в 1Gb (функция для создания тестовых файлов лежит в файле main.go):
+Также я протестировал время работы каждого кейса на объеме данных в 1Gb (функция для создания тестовых файлов лежит в файле mock.go):
  - кейс с сортировкой
 ```shell
-ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -sort
+ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -sort
 Run case sort...
-Elapsed time for case sort:  1m9.339624945s
+Elapsed time for case sort:  3m13.297766837s
 ```
 - кейс с созданием уникального множества
 ```shell
-ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq
+ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -uniq
 Run case uniq...
-Elapsed time for case uniq:  1m14.607451175s
+Elapsed time for case uniq:  4m8.058498183s
 ```
 - кейс с созданием кучи
 ```shell
-ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -heap
+ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -heap
 Run case heap...
-Elapsed time for case heap:  1m17.664449995s
+Elapsed time for case heap:  3m17.278995406s
 ```
 - кейс с сортировкой уникального множества
 ```shell
-ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq -sort
+ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -uniq -sort
 Run case uniq sort...
-Elapsed time for case uniq sort:  1m15.477383283s
+Elapsed time for case uniq sort:  2m29.63071295s
 ```
 
 
