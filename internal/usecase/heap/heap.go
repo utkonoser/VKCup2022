@@ -2,11 +2,13 @@ package heap
 
 import (
 	"bufio"
+	"fmt"
 	"goElimination/internal/usecase/sort"
 	"log"
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var WgH sync.WaitGroup
@@ -22,7 +24,11 @@ type HeapInterface interface {
 
 // RunHeap - функция, отвечающая за корректную работу кейса с кучей
 func RunHeap(path string) {
+	start := time.Now()
 	RunReadAllHeap(path)
+	finRead := time.Since(start)
+	fmt.Println("End of reading all files: ", finRead)
+	start = time.Now()
 	WgH.Add(1)
 	go func() {
 		defer WgH.Done()
@@ -31,7 +37,12 @@ func RunHeap(path string) {
 		}
 	}()
 	WgH.Wait()
+	finHeap := time.Since(start)
+	fmt.Println("End of Build Heap: ", finHeap)
+	start = time.Now()
 	sort.CreateTxt(HeapVar.Items, path)
+	finTxt := time.Since(start)
+	fmt.Println("End of creating res.txt: ", finTxt)
 }
 
 // Heap - реализация кучи

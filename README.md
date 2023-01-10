@@ -6,9 +6,9 @@
 
 
 Что у меня получилось:
-- в кейсе sort реализовал конкурентный алгоритм быстрой сортировки
-- в кейсе heap реализовал структуру max-heap
-- в кейсе uniq реализовал структуру уникального множества
+- в кейсе `sort` реализовал конкурентный алгоритм быстрой сортировки
+- в кейсе `heap` реализовал структуру max-heap
+- в кейсе `uniq` реализовал структуру уникального множества
 - написал тесты, добился покрытия больше 80%, maintainability на CodeClimate показал отличную оценку
 - написал довольно подробное описание всех функций, методов и структур данных
 - смог уложиться в 500мб оперативки с помощью функции `debug.SetMemoryLimit()`
@@ -16,32 +16,44 @@
 
 Что у меня не получилось:
 - не смог реализовать кейс с возобновлением работы сервиса при падении
-- слишком медленная работа приложения на мой взгляд
+- не смог реализовать более быструю запись результата в конечный файл `res.txt`
 
-Также я протестировал время работы каждого кейса на объеме данных в 1Gb (функция для создания тестовых файлов лежит в файле mock.go):
+Также я протестировал время работы каждого кейса на объеме данных в 100 000 файлов по 500 случайных чисел общим размером в 1Gb (функция для создания тестовых файлов лежит в файле `mock.go`):
  - кейс с сортировкой
 ```shell
-ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -sort
-Run case sort...
-Elapsed time for case sort:  3m13.297766837s
+ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -sort
+Run case 'sort'...
+End of reading all files:  11.246952043s
+End of Quick Sort:  1.227280797s
+End of creating res.txt:  2m43.930160514s
+Elapsed time for case 'sort':  2m56.404841773s
 ```
 - кейс с созданием уникального множества
 ```shell
-ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -uniq
-Run case uniq...
-Elapsed time for case uniq:  4m8.058498183s
+ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq
+Run case 'uniq'...
+End of reading all files and insert in set:  48.548071279s
+End of creating res.txt:  2m36.616192787s
+Elapsed time for case 'uniq':  3m26.498117581s
 ```
 - кейс с созданием кучи
 ```shell
-ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -heap
-Run case heap...
-Elapsed time for case heap:  3m17.278995406s
+ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -heap
+Run case 'heap'...
+End of reading all files:  15.08828298s
+End of Build Heap:  5.905660681s
+End of creating res.txt:  2m22.327240032s
+Elapsed time for case 'heap':  2m43.333902252s
 ```
 - кейс с сортировкой уникального множества
 ```shell
-ni@ni-asus:~/GolandProjects/GoElimination/cmd/app$ go run main.go -uniq -sort
-Run case uniq sort...
-Elapsed time for case uniq sort:  2m29.63071295s
+ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq -sort
+Run case 'uniq sort'...
+End of reading all files and insert in set:  48.565243436s
+End of Quick Sort of set:  1.312140466s
+End of creating res.txt:  1m38.297783554s
+Elapsed time for case 'uniq sort':  2m29.398799116s
+
 ```
 
 

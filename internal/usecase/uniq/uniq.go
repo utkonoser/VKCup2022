@@ -2,11 +2,13 @@ package uniq
 
 import (
 	"bufio"
+	"fmt"
 	"goElimination/internal/usecase/sort"
 	"log"
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // SetInterface - интерфейс уникального множества
@@ -51,9 +53,15 @@ func (s *SetStruct) Items() sort.SliceItems {
 // RunUniq - функция, запускающая кейс с уникальным множеством
 func RunUniq(path string) {
 	var SetVar SetStruct
+	start := time.Now()
 	SetVar.RunReadAllUniq(path)
+	finRead := time.Since(start)
+	fmt.Println("End of reading all files and insert in set: ", finRead)
 	items := SetVar.Items().ShowItems()
+	start = time.Now()
 	sort.CreateTxt(items, path)
+	finTxt := time.Since(start)
+	fmt.Println("End of creating res.txt: ", finTxt)
 }
 
 // RunReadAllUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл

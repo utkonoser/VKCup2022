@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 const (
@@ -31,9 +32,18 @@ type Result struct {
 // RunSort - запуск всех функций для реализации сортировки данных
 func RunSort(path string) {
 	var r Result
+	start := time.Now()
 	r.RunReadAll(path)
+	finRead := time.Since(start)
+	fmt.Println("End of reading all files: ", finRead)
+	start = time.Now()
 	QSort(r.Res)
+	finQSort := time.Since(start)
+	fmt.Println("End of Quick Sort: ", finQSort)
+	start = time.Now()
 	CreateTxt(r.Res, path)
+	finTxt := time.Since(start)
+	fmt.Println("End of creating res.txt: ", finTxt)
 }
 
 // ShowItems - метод, возвращающий слайс структуры

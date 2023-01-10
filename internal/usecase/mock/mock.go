@@ -9,7 +9,7 @@ import (
 )
 
 // dataPath - путь для сгенерированных файлов
-const dataPath = "../../data/"
+const dataPath = "../../../data/"
 
 // createData - функция для создания тестовых файлов при countFiles=50000
 // и countIntegers=1000, размер данных будет ~1Gb
@@ -42,4 +42,3 @@ func createData(countFiles, countIntegers int) {
 	}
 	wg.Wait()
 }
-

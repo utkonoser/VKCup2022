@@ -30,30 +30,30 @@ func main() {
 
 	switch {
 	case *s && *u && args == 3:
-		fmt.Println("Run case uniq sort...")
+		fmt.Println("Run case 'uniq sort'...")
 		start := time.Now()
 		uniqSort.RunUniqSort(dataPath)
 		fin := time.Since(start)
-		fmt.Println("Elapsed time for case uniq sort: ", fin)
+		fmt.Println("Elapsed time for case 'uniq sort': ", fin)
 	case *s && args == 2:
-		fmt.Println("Run case sort...")
+		fmt.Println("Run case 'sort'...")
 		start := time.Now()
 		sort.RunSort(dataPath)
 		fin := time.Since(start)
-		fmt.Println("Elapsed time for case sort: ", fin)
+		fmt.Println("Elapsed time for case 'sort': ", fin)
 	case *u && args == 2:
-		fmt.Println("Run case uniq...")
+		fmt.Println("Run case 'uniq'...")
 		start := time.Now()
 		uniq.RunUniq(dataPath)
 		fin := time.Since(start)
-		fmt.Println("Elapsed time for case uniq: ", fin)
+		fmt.Println("Elapsed time for case 'uniq': ", fin)
 	case *h && args == 2:
-		fmt.Println("Run case heap...")
+		fmt.Println("Run case 'heap'...")
 		start := time.Now()
 		heap.RunHeap(dataPath)
 		fin := time.Since(start)
-		fmt.Println("Elapsed time for case heap: ", fin)
+		fmt.Println("Elapsed time for case 'heap': ", fin)
 	default:
-		fmt.Println("Please add subcommand")
+		fmt.Println("Please add subcommand!")
 	}
 }
