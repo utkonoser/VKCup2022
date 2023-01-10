@@ -11,6 +11,27 @@ import (
 	"time"
 )
 
+// RunUniq - функция, запускающая кейс с уникальным множеством
+func RunUniq(path string) {
+	var SetVar SetStruct
+
+	fmt.Println("Run case 'uniq'...")
+	startCaseUniq := time.Now()
+	SetVar.RunReadAllUniq(path)
+	endRunReadAllFunc := time.Since(startCaseUniq)
+	fmt.Println("End of reading all files and insert in set: ", endRunReadAllFunc)
+
+	items := SetVar.Items().ShowItems()
+
+	startCreateTxt := time.Now()
+	sort.CreateTxt(items, path)
+	endCreateTxt := time.Since(startCreateTxt)
+	fmt.Println("End of creating res.txt: ", endCreateTxt)
+
+	endCaseUniq := time.Since(startCaseUniq)
+	fmt.Println("Elapsed time for case 'uniq': ", endCaseUniq)
+}
+
 // SetInterface - интерфейс уникального множества
 type SetInterface interface {
 	Insert(item int)
@@ -50,21 +71,7 @@ func (s *SetStruct) Items() sort.SliceItems {
 	return &items
 }
 
-// RunUniq - функция, запускающая кейс с уникальным множеством
-func RunUniq(path string) {
-	var SetVar SetStruct
-	start := time.Now()
-	SetVar.RunReadAllUniq(path)
-	finRead := time.Since(start)
-	fmt.Println("End of reading all files and insert in set: ", finRead)
-	items := SetVar.Items().ShowItems()
-	start = time.Now()
-	sort.CreateTxt(items, path)
-	finTxt := time.Since(start)
-	fmt.Println("End of creating res.txt: ", finTxt)
-}
-
-// RunReadAllUniq - функция, читает файлы из нужной папки и сразу записывает уникальные значения в результирующий файл
+// RunReadAllUniq - функция, читает файлы из нужной папки и добавляет числа из файлов в уникальное множество
 func (s *SetStruct) RunReadAllUniq(path string) {
 	if _, err := os.Stat(path + "res.txt"); err == nil {
 		err = os.Remove(path + "res.txt")

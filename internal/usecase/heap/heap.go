@@ -15,20 +15,16 @@ var WgH sync.WaitGroup
 var HeapCh = make(chan int, 100_000_000)
 var HeapVar Heap
 
-// HeapInterface - интерфейс кучи
-type HeapInterface interface {
-	Swap(index1, index2 int)
-	Insert(value int)
-	buildHeap(index int)
-}
-
 // RunHeap - функция, отвечающая за корректную работу кейса с кучей
 func RunHeap(path string) {
-	start := time.Now()
+
+	fmt.Println("Run case 'heap'...")
+	startHeapCase := time.Now()
 	RunReadAllHeap(path)
-	finRead := time.Since(start)
-	fmt.Println("End of reading all files: ", finRead)
-	start = time.Now()
+	endReadAllFunc := time.Since(startHeapCase)
+	fmt.Println("End of reading all files: ", endReadAllFunc)
+
+	startBuildHeap := time.Now()
 	WgH.Add(1)
 	go func() {
 		defer WgH.Done()
@@ -37,12 +33,23 @@ func RunHeap(path string) {
 		}
 	}()
 	WgH.Wait()
-	finHeap := time.Since(start)
-	fmt.Println("End of Build Heap: ", finHeap)
-	start = time.Now()
+	endBuildHeap := time.Since(startBuildHeap)
+	fmt.Println("End of Build Heap: ", endBuildHeap)
+
+	startCreateTxt := time.Now()
 	sort.CreateTxt(HeapVar.Items, path)
-	finTxt := time.Since(start)
-	fmt.Println("End of creating res.txt: ", finTxt)
+	endCreateTxt := time.Since(startCreateTxt)
+	fmt.Println("End of creating res.txt: ", endCreateTxt)
+
+	endHeapCase := time.Since(startHeapCase)
+	fmt.Println("Elapsed time for case 'heap': ", endHeapCase)
+}
+
+// HeapInterface - интерфейс кучи
+type HeapInterface interface {
+	Swap(index1, index2 int)
+	Insert(value int)
+	buildHeap(index int)
 }
 
 // Heap - реализация кучи

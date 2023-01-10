@@ -18,88 +18,6 @@ const (
 	quickSortThreshold = 30
 )
 
-// SliceItems - интерфейс результирующего списка
-type SliceItems interface {
-	RunReadAll(path string)
-	ShowItems() []int
-}
-
-// Result - слайс результирующих значений
-type Result struct {
-	Res []int
-	sync.Mutex
-}
-
-// RunSort - запуск всех функций для реализации сортировки данных
-func RunSort(path string) {
-	var r Result
-	start := time.Now()
-	r.RunReadAll(path)
-	finRead := time.Since(start)
-	fmt.Println("End of reading all files: ", finRead)
-	start = time.Now()
-	QSort(r.Res)
-	finQSort := time.Since(start)
-	fmt.Println("End of Quick Sort: ", finQSort)
-	start = time.Now()
-	CreateTxt(r.Res, path)
-	finTxt := time.Since(start)
-	fmt.Println("End of creating res.txt: ", finTxt)
-}
-
-// ShowItems - метод, возвращающий слайс структуры
-func (r *Result) ShowItems() []int {
-	return r.Res
-}
-
-// RunReadAll - функция читает значения из файлов в нужной папке и записывает из в один слайс
-func (r *Result) RunReadAll(path string) {
-	if _, err := os.Stat(path + "res.txt"); err == nil {
-		err = os.Remove(path + "res.txt")
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	var wg sync.WaitGroup
-	files, err := os.ReadDir(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, txtFile := range files {
-		txtFile := txtFile
-		wg.Add(1)
-		go func() {
-			file, err := os.Open(path + txtFile.Name())
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer func() {
-				err = file.Close()
-				if err != nil {
-					log.Fatal(err)
-				}
-				wg.Done()
-			}()
-
-			scanner := bufio.NewScanner(file)
-			for scanner.Scan() {
-				num, err := strconv.Atoi(scanner.Text())
-				if err != nil {
-					log.Fatal(err)
-				}
-				r.Lock()
-				r.Res = append(r.Res, num)
-				r.Unlock()
-			}
-			if err := scanner.Err(); err != nil {
-				log.Fatal(err)
-			}
-		}()
-	}
-	wg.Wait()
-}
-
 // CreateTxt - функция создает результирующий файл res.txt в папке data
 func CreateTxt(r []int, path string) {
 
@@ -127,6 +45,48 @@ func CreateTxt(r []int, path string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// RunSort - запуск всех функций для реализации сортировки данных
+func RunSort(path string) {
+	var r Result
+
+	fmt.Println("Run case 'sort'...")
+	startCaseSort := time.Now()
+
+	r.RunReadAll(path)
+	endRunReadAllFunc := time.Since(startCaseSort)
+	fmt.Println("End of reading all files: ", endRunReadAllFunc)
+
+	startQSort := time.Now()
+	QSort(r.Res)
+	endQSort := time.Since(startQSort)
+	fmt.Println("End of Quick Sort: ", endQSort)
+
+	startCreateTxt := time.Now()
+	CreateTxt(r.Res, path)
+	endCreateTxt := time.Since(startCreateTxt)
+	fmt.Println("End of creating res.txt: ", endCreateTxt)
+
+	endCaseSort := time.Since(startCaseSort)
+	fmt.Println("Elapsed time for case 'sort': ", endCaseSort)
+}
+
+// SliceItems - интерфейс результирующего списка
+type SliceItems interface {
+	RunReadAll(path string)
+	ShowItems() []int
+}
+
+// Result - структура результирующих значений
+type Result struct {
+	Res []int
+	sync.Mutex
+}
+
+// ShowItems - метод, возвращающий слайс структуры
+func (r *Result) ShowItems() []int {
+	return r.Res
 }
 
 // InsertSort - функция сортировки вставкой, эффективна при малом количестве сортируемых элементов
@@ -190,5 +150,53 @@ func ConcurrentQuickSort(data []int, wg *sync.WaitGroup) {
 func QSort(data []int) {
 	var wg sync.WaitGroup
 	ConcurrentQuickSort(data, &wg)
+	wg.Wait()
+}
+
+// RunReadAll - функция читает значения из файлов в нужной папке и записывает из в один слайс
+func (r *Result) RunReadAll(path string) {
+	if _, err := os.Stat(path + "res.txt"); err == nil {
+		err = os.Remove(path + "res.txt")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	var wg sync.WaitGroup
+	files, err := os.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, txtFile := range files {
+		txtFile := txtFile
+		wg.Add(1)
+		go func() {
+			file, err := os.Open(path + txtFile.Name())
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer func() {
+				err = file.Close()
+				if err != nil {
+					log.Fatal(err)
+				}
+				wg.Done()
+			}()
+
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				num, err := strconv.Atoi(scanner.Text())
+				if err != nil {
+					log.Fatal(err)
+				}
+				r.Lock()
+				r.Res = append(r.Res, num)
+				r.Unlock()
+			}
+			if err := scanner.Err(); err != nil {
+				log.Fatal(err)
+			}
+		}()
+	}
 	wg.Wait()
 }

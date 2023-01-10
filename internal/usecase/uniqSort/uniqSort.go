@@ -12,17 +12,25 @@ var SetVar uniq.SetStruct
 
 // RunUniqSort - основная функция кейса с сортировкой уникальных значений
 func RunUniqSort(path string) {
-	start := time.Now()
+	fmt.Println("Run case 'uniq sort'...")
+	startCaseUniqSort := time.Now()
+
 	SetVar.RunReadAllUniq(path)
-	finRead := time.Since(start)
-	fmt.Println("End of reading all files and insert in set: ", finRead)
+	endReadAllFunc := time.Since(startCaseUniqSort)
+	fmt.Println("End of reading all files and insert in set: ", endReadAllFunc)
+
 	items := SetVar.Items().ShowItems()
-	start = time.Now()
+
+	startQSort := time.Now()
 	sort.QSort(items)
-	finQSort := time.Since(start)
-	fmt.Println("End of Quick Sort of set: ", finQSort)
-	start = time.Now()
+	endQSort := time.Since(startQSort)
+	fmt.Println("End of Quick Sort of set: ", endQSort)
+
+	startCreateTxt := time.Now()
 	sort.CreateTxt(items, path)
-	finTxt := time.Since(start)
-	fmt.Println("End of creating res.txt: ", finTxt)
+	endCreateTxt := time.Since(startCreateTxt)
+	fmt.Println("End of creating res.txt: ", endCreateTxt)
+
+	endCaseUniqSort := time.Since(startCaseUniqSort)
+	fmt.Println("Elapsed time for case 'uniq sort': ", endCaseUniqSort)
 }
