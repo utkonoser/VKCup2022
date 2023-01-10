@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -114,11 +115,17 @@ func CreateTxt(r []int, path string) {
 		}
 	}()
 
-	for _, i := range r {
-		_, err = resTxt.WriteString(fmt.Sprintln(i))
-		if err != nil {
-			log.Fatal(err)
-		}
+	var sliceS []string
+
+	for _, n := range r {
+		sliceS = append(sliceS, strconv.Itoa(n))
+	}
+
+	s := strings.Join(sliceS, "\n")
+
+	_, err = resTxt.WriteString(s)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 

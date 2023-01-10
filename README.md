@@ -16,44 +16,43 @@
 
 Что у меня не получилось:
 - не смог реализовать кейс с возобновлением работы сервиса при падении
-- не смог реализовать более быструю запись результата в конечный файл `res.txt`
+- в кейсе `uniq` не смог сохранить начальный порядок при составлении уникального множества
 
 Также я протестировал время работы каждого кейса на объеме данных в 100 000 файлов по 500 случайных чисел общим размером в 1Gb (функция для создания тестовых файлов лежит в файле `mock.go`):
  - кейс с сортировкой
 ```shell
 ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -sort
 Run case 'sort'...
-End of reading all files:  11.246952043s
-End of Quick Sort:  1.227280797s
-End of creating res.txt:  2m43.930160514s
-Elapsed time for case 'sort':  2m56.404841773s
+End of reading all files:  9.567803063s
+End of Quick Sort:  1.335417317s
+End of creating res.txt:  11.695543512s
+Elapsed time for case 'sort':  22.603597167s
 ```
 - кейс с созданием уникального множества
 ```shell
 ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq
 Run case 'uniq'...
-End of reading all files and insert in set:  48.548071279s
-End of creating res.txt:  2m36.616192787s
-Elapsed time for case 'uniq':  3m26.498117581s
+End of reading all files and insert in set:  47.931476447s
+End of creating res.txt:  12.175483384s
+Elapsed time for case 'uniq':  1m1.444253464s
 ```
 - кейс с созданием кучи
 ```shell
 ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -heap
 Run case 'heap'...
-End of reading all files:  15.08828298s
-End of Build Heap:  5.905660681s
-End of creating res.txt:  2m22.327240032s
-Elapsed time for case 'heap':  2m43.333902252s
+End of reading all files:  16.538529955s
+End of Build Heap:  6.819695146s
+End of creating res.txt:  13.532071056s
+Elapsed time for case 'heap':  36.917268832s
 ```
 - кейс с сортировкой уникального множества
 ```shell
 ni@ni-asus:~/GolandProjects/Go Elimination/cmd/app$ go run main.go -uniq -sort
 Run case 'uniq sort'...
-End of reading all files and insert in set:  48.565243436s
-End of Quick Sort of set:  1.312140466s
-End of creating res.txt:  1m38.297783554s
-Elapsed time for case 'uniq sort':  2m29.398799116s
-
+End of reading all files and insert in set:  48.275785886s
+End of Quick Sort of set:  1.329488466s
+End of creating res.txt:  13.347320682s
+Elapsed time for case 'uniq sort':  1m4.211835895s
 ```
 
 
